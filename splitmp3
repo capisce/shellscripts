@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+SPLITDIR=$1-split
+mkdir -p "$SPLITDIR"
+mp3splt -p shots=10,min=1,rm=1_1 -s "$1"
+
+ls | grep "silence_[0-9]*.mp3" | while read i; do
+    mv "$i" "$SPLITDIR"
+done
+
+BASENAME=$(mp3info -p "%t" "$1")
+
+cd "$SPLITDIR"
+
+ls *.mp3 | while read i; do
+    NUMBER=$(echo "$i" | sed 's/.*_silence_\([0-9]*\).mp3/\1/')
+    TITLE="$BASENAME - $NUMBER"
+    id3v2 -t "$TITLE" "$i"
+done

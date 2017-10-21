@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+xbacklight -time 1000 -steps 40 -set $1
