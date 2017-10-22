@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-vi `find . -name $1`
+$EDITOR `find . -name $1`
