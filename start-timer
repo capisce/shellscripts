@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# Restore cursor and move to new line when terminated
+trap 'tput cnorm; echo' EXIT
+trap 'exit 127' HUP INT TERM
+
+# Make text cursor invisible
+tput civis
+# Save cursor position
+tput sc
+
+COUNT=${1%?}
+UNIT=${1: -1}
+if [ "$UNIT" == "m" ]; then
+    COUNT=$(($COUNT * 60))
+fi
+if [ "$UNIT" == "h" ]; then
+    COUNT=$(($COUNT * 60 * 60))
+fi
+while [ $COUNT -ge 0 ]; do
+    tput rc
+    printf "%ss" "${COUNT}"
+    sleep 1s
+    COUNT=$(($COUNT-1))
+done
+ogg123 ~/Pollux.ogg &>/dev/null
