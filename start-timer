@@ -19,7 +19,7 @@ if [ "$UNIT" == "h" ]; then
 fi
 while [ $COUNT -ge 0 ]; do
     tput rc
-    printf "%ss" "${COUNT}"
+    printf "%sm%ss" "$(($COUNT / 60))" "$((COUNT % 60))"
     sleep 1s
     COUNT=$(($COUNT-1))
 done
