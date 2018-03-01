@@ -9,18 +9,30 @@ tput civis
 # Save cursor position
 tput sc
 
-COUNT=${1%?}
-UNIT=${1: -1}
-if [ "$UNIT" == "m" ]; then
-    COUNT=$(($COUNT * 60))
-fi
-if [ "$UNIT" == "h" ]; then
-    COUNT=$(($COUNT * 60 * 60))
-fi
+COUNT=0
+
+VAL=
+for x in $(grep -Eo '[[:alpha:]]+|[0-9]+' <<<"$1"); do
+    if [ "$VAL" == "" ]; then
+        VAL=$x
+    else
+        if [ "$x" == "h" ]; then
+            COUNT=$(($COUNT + $VAL * 60 * 60))
+        fi
+        if [ "$x" == "m" ]; then
+            COUNT=$(($COUNT + $VAL * 60))
+        fi
+        if [ "$x" == "s" ]; then
+            COUNT=$(($COUNT + $VAL))
+        fi
+        VAL=
+    fi
+done
+
 while [ $COUNT -ge 0 ]; do
     tput rc
-    printf "%sm%ss" "$(($COUNT / 60))" "$((COUNT % 60))"
+    printf "%sm%ss " "$(($COUNT / 60))" "$((COUNT % 60))"
     sleep 1s
-    COUNT=$(($COUNT-1))
+    COUNT=$(($COUNT - 1))
 done
 ogg123 ~/Pollux.ogg &>/dev/null
