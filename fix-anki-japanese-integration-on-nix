@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Fixes error "Please ensure your Linux system has 32 bit binary support"
+# when using the Japanese addon for Anki on NixOS, by using the 64-bit
+# versions of the binaries from nixpkgs instead.
+if ! which mecab >/dev/null 2>&1; then
+    nix-env -i mecab
+fi
+if ! which kakasi >/dev/null 2>&1; then
+    nix-env -i kakasi
+fi
+cd ~/.local/share/Anki2/addons/japanese/support
+
+# Ideally we'd use a symbolc link instead of copying, but the Japanese
+# plugin does chmod 0755 on the files for some reason, which won't work
+# if the files are read-only.
+if [ ! -f mecab.bak ]; then
+    mv mecab.lin mecab.bak
+    cp `which mecab` mecab.lin
+    echo "Replaced mecab with system version, backed up old as mecab.bak"
+fi
+if [ ! -f kakasi.bak ]; then
+    mv kakasi.lin kakasi.bak
+    cp `which kakasi` kakasi.lin
+    echo "Replaced kakasi with system version, backed up old as kakasi.bak"
+fi
